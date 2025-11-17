@@ -1,0 +1,86 @@
+.home-container {
+  position: relative;
+  height: 100vh;
+  background: url('https://imgsvc.trackercdn.com/url/size(1080),fit(cover),quality(40)/https%3A%2F%2Ftrackercdn.com%2Fcdn%2Ftracker.gg%2Fvalorant%2Fimages%2Fvalorant-home-hero.jpg/image.jpg') center/cover no-repeat;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  font-family: 'Poppins', sans-serif;
+  text-align: center;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(10, 10, 10, 0.6);
+  backdrop-filter: blur(3px);
+  z-index: 0;
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+.logo-section h1 {
+  font-size: 3rem;
+  letter-spacing: 2px;
+  font-weight: 700;
+}
+
+.logo-section p {
+  color: #9aa0aa;
+  margin-top: 0.5rem;
+  font-size: 1.1rem;
+}
+
+.valorant-logo {
+  width: 60px;
+  margin-bottom: 1rem;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  background-color: #1a1d23;
+  border-radius: 15px;
+  overflow: hidden;
+  width: 500px;
+  max-width: 90%;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+}
+
+.search-icon {
+  background-color: #0e1116;
+  padding: 0.8rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-icon img {
+  width: 24px;
+  filter: brightness(0) invert(1);
+}
+
+.search-box input {
+  flex: 1;
+  padding: 1rem;
+  font-size: 1rem;
+  border: none;
+  outline: none;
+  background: #2b2f36;
+  color: white;
+}
+
+.search-box input::placeholder {
+  color: #c2c6cc;
+}

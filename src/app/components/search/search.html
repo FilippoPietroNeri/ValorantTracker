@@ -1,0 +1,11 @@
+<div class="search">
+  <input [(ngModel)]="name" placeholder="Riot ID (es. TenZ)" />
+  <input [(ngModel)]="tag" placeholder="Tagline (es. NA1)" />
+  <button (click)="search()">Cerca</button>
+</div>
+
+<div *ngIf="account">
+  <h2>{{ account.name }}#{{ account.tag }}</h2>
+  <img [src]="account.card.small" alt="Player card">
+  <p>Livello account: {{ account.account_level }}</p>
+</div>

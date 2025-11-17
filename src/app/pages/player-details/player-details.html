@@ -1,0 +1,76 @@
+<div class="player-page" *ngIf="!loading; else loadingTpl">
+  <!-- Header -->
+  <div class="banner" [style.backgroundImage]="'url(' + account.card.wide + ')'">
+    <div class="overlay"></div>
+    <div class="player-info">
+      <img [src]="account.card.small" class="avatar" alt="Player Avatar">
+      <div>
+        <h1>{{ account.name }}<span>#{{ account.tag }}</span></h1>
+        <p>{{ mmr?.currenttierpatched || 'Unranked' }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="active">Overview</button>
+    <button>Matches</button>
+    <button>Performance</button>
+    <button>Agents</button>
+    <button>Maps</button>
+  </div>
+
+  <!-- Stats Overview -->
+  <section class="overview">
+    <div class="stat-card">
+      <h3>Current Rank</h3>
+      <img [src]="mmr?.images?.small" alt="Rank">
+      <p>{{ mmr?.currenttierpatched }}</p>
+    </div>
+
+    <div class="stat-card">
+      <h3>Ranking in Tier</h3>
+      <p>{{ mmr?.ranking_in_tier }} RR</p>
+    </div>
+
+    <div class="stat-card">
+      <h3>Account Level</h3>
+      <p>{{ account.account_level }}</p>
+    </div>
+  </section>
+
+  <!-- Match History -->
+  <section class="matches" *ngIf="matches.length > 0">
+    <h2>Last Matches</h2>
+    <div class="match-table">
+      <div class="match-row header">
+        <span>Map</span>
+        <span>Agent</span>
+        <span>Mode</span>
+        <span>K/D/A</span>
+        <span>Result</span>
+      </div>
+
+      <div class="match-row" *ngFor="let match of matches">
+        <span>{{ match.metadata.map }}</span>
+        <span>
+          <img [src]="match.players.all_players[0].assets.agent.small" class="agent">
+          {{ match.players.all_players[0].character }}
+        </span>
+        <span>{{ match.metadata.mode }}</span>
+        <span>
+          {{ match.players.all_players[0].stats.kills }}/
+          {{ match.players.all_players[0].stats.deaths }}/
+          {{ match.players.all_players[0].stats.assists }}
+        </span>
+        <span [class.win]="match.teams.blue.has_won"> 
+          {{ match.teams.blue.has_won ? 'Victory' : 'Defeat' }}
+        </span>
+      </div>
+    </div>
+  </section>
+</div>
+
+<ng-template #loadingTpl>
+  <div class="loading">Loading player data...</div>
+</ng-template>

@@ -1,0 +1,23 @@
+<div class="home-container">
+  <div class="overlay"></div>
+
+  <div class="content">
+    <div class="logo-section">
+      <img src="https://www.pngall.com/wp-content/uploads/13/Valorant-Logo-PNG-Cutout.png" alt="Valorant logo" class="valorant-logo" />
+      <h1>VALORANT STATS</h1>
+      <p>Check Detailed Valorant Stats and Leaderboards</p>
+    </div>
+
+    <div class="search-box">
+      <div class="search-icon">
+        <img src="https://assets.streamlinehq.com/image/private/w_300,h_300,ar_1/f_auto/v1/icons/video-games/riot-games-2vd949zm1hbxz31ows9gi.png/riot-games-3jn0kkoft4vvp49m2g5g8r.png?_a=DATAg1AAZAA0" alt="Riot logo" />
+      </div>
+      <input
+        type="text"
+        [(ngModel)]="searchText"
+        placeholder="Find an Agent or Guide, ie. player#NA1, or Sage"
+        (keyup.enter)="onSearch()"
+      />
+    </div>
+  </div>
+</div>
