@@ -32,39 +32,11 @@
   <div class="bg-dark border-bottom border-secondary">
     <div class="container">
       <ul class="nav nav-tabs border-0" role="tablist">
-        <li class="nav-item">
-          <button class="nav-link active bg-transparent text-white px-4 py-3" 
-                  data-bs-toggle="tab" 
-                  data-bs-target="#overview">
-            Overview
-          </button>
-        </li>
-        <li class="nav-item">
-          <button class="nav-link bg-transparent text-white-50 px-4 py-3" 
-                  data-bs-toggle="tab" 
-                  data-bs-target="#matches">
-            Matches
-          </button>
-        </li>
-        <li class="nav-item">
-          <button class="nav-link bg-transparent text-white-50 px-4 py-3" 
-                  data-bs-toggle="tab" 
-                  data-bs-target="#performance">
-            Performance
-          </button>
-        </li>
-        <li class="nav-item">
-          <button class="nav-link bg-transparent text-white-50 px-4 py-3" 
-                  data-bs-toggle="tab" 
-                  data-bs-target="#agents">
-            Agents
-          </button>
-        </li>
-        <li class="nav-item">
-          <button class="nav-link bg-transparent text-white-50 px-4 py-3" 
-                  data-bs-toggle="tab" 
-                  data-bs-target="#maps">
-            Maps
+        <li class="nav-item" *ngFor="let tab of tabs">
+          <button class="nav-link bg-transparent px-4 py-3"
+                  [ngClass]="activeTab === tab.id ? 'active text-white' : 'text-white-50'"
+                  (click)="setActiveTab(tab.id)">
+            {{ tab.label }}
           </button>
         </li>
       </ul>
@@ -76,7 +48,7 @@
     <div class="container">
       
       <!-- Overview Tab -->
-      <div class="tab-pane fade show active" id="overview">
+      <div *ngIf="activeTab === 'overview'">
         <div class="row g-4 mb-5">
           <!-- Current Rank Card -->
           <div class="col-md-4">
@@ -119,78 +91,394 @@
           </div>
         </div>
 
-        <!-- Match History Section -->
+        <!-- Quick Match History -->
         <section *ngIf="matches.length > 0">
           <h2 class="mb-4 fw-bold">
-            <i class="bi bi-clock-history me-2"></i>Last Matches
+            <i class="bi bi-clock-history me-2"></i>Recent Matches
           </h2>
           
-          <div class="card bg-secondary border-0 shadow-lg">
-            <div class="card-body p-0">
-              <div class="table-responsive">
-                <table class="table table-dark table-hover mb-0">
-                  <thead class="border-bottom border-danger">
-                    <tr>
-                      <th class="py-3 px-4">Map</th>
-                      <th class="py-3">Agent</th>
-                      <th class="py-3">Mode</th>
-                      <th class="py-3">K/D/A</th>
-                      <th class="py-3 text-end px-4">Result</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr *ngFor="let match of matches" class="border-bottom border-secondary">
-                      <td class="py-3 px-4 fw-semibold">{{ match.metadata.map }}</td>
-                      <td class="py-3">
-                        <div class="d-flex align-items-center gap-2">
-                          <img [src]="match.players.all_players[0].assets.agent.small" 
-                               class="rounded"
-                               style="width: 32px; height: 32px;"
-                               alt="Agent">
-                          <span>{{ match.players.all_players[0].character }}</span>
+          <div class="row g-3">
+            <div class="col-12" *ngFor="let match of matches.slice(0, 5)">
+              <div class="match-card bg-secondary border-0 shadow-sm" 
+                   [ngClass]="getPlayerTeam(match).has_won ? 'border-start border-success border-4' : 'border-start border-danger border-4'">
+                <div class="card-body p-3">
+                  <div class="row align-items-center">
+                    <div class="col-auto">
+                      <img [src]="getPlayerData(match).assets.agent.small" 
+                           class="rounded"
+                           style="width: 50px; height: 50px;"
+                           alt="Agent">
+                    </div>
+                    <div class="col">
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                          <h6 class="mb-1 fw-bold">{{ match.metadata.map }}</h6>
+                          <span class="badge bg-info text-dark me-2">{{ match.metadata.mode }}</span>
+                          <span class="text-white-50 small">{{ match.metadata.game_start_patched }}</span>
                         </div>
-                      </td>
-                      <td class="py-3">
-                        <span class="badge bg-info text-dark">{{ match.metadata.mode }}</span>
-                      </td>
-                      <td class="py-3">
-                        <span class="text-success">{{ match.players.all_players[0].stats.kills }}</span> /
-                        <span class="text-danger">{{ match.players.all_players[0].stats.deaths }}</span> /
-                        <span class="text-warning">{{ match.players.all_players[0].stats.assists }}</span>
-                      </td>
-                      <td class="py-3 text-end px-4">
-                        <span class="badge fs-6 px-3 py-2" 
-                              [ngClass]="match.teams.blue.has_won ? 'bg-success' : 'bg-danger'">
-                          {{ match.teams.blue.has_won ? 'Victory' : 'Defeat' }}
-                        </span>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+                        <div class="text-center">
+                          <div class="mb-1">
+                            <span class="text-success fw-bold fs-5">{{ getPlayerData(match).stats.kills }}</span>
+                            <span class="text-white-50 mx-1">/</span>
+                            <span class="text-danger fw-bold fs-5">{{ getPlayerData(match).stats.deaths }}</span>
+                            <span class="text-white-50 mx-1">/</span>
+                            <span class="text-warning fw-bold fs-5">{{ getPlayerData(match).stats.assists }}</span>
+                          </div>
+                          <small class="text-white-50">K/D/A</small>
+                        </div>
+                        <div class="text-end">
+                          <span class="badge fs-6 px-3 py-2" 
+                                [ngClass]="getPlayerTeam(match).has_won ? 'bg-success' : 'bg-danger'">
+                            {{ getPlayerTeam(match).has_won ? 'Victory' : 'Defeat' }}
+                          </span>
+                          <div class="mt-1">
+                            <small class="text-white-50">{{ getTeamScore(match) }}</small>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </section>
       </div>
 
-      <!-- Matches Tab -->
-      <div class="tab-pane fade" id="matches">
-        <h3 class="text-center text-white-50">Match history coming soon...</h3>
+      <!-- Matches Tab - Detailed -->
+      <div *ngIf="activeTab === 'matches'">
+        <h2 class="mb-4 fw-bold text-danger">
+          <i class="bi bi-controller me-2"></i>Match History
+        </h2>
+
+        <div *ngIf="matches.length === 0" class="text-center py-5">
+          <i class="bi bi-inbox display-1 text-white-50 mb-3"></i>
+          <h4 class="text-white-50">No matches found</h4>
+        </div>
+
+        <div class="row g-3" *ngIf="matches.length > 0">
+          <div class="col-12" *ngFor="let match of matches; let i = index">
+            <div class="card bg-secondary border-0 shadow match-expandable"
+                 [ngClass]="getPlayerTeam(match).has_won ? 'border-start border-success border-4' : 'border-start border-danger border-4'">
+              
+              <!-- Match Header -->
+              <div class="card-header bg-dark border-0 p-3 cursor-pointer" 
+                   (click)="toggleMatchDetails(i, match.metadata.matchid)">
+                <div class="row align-items-center">
+                  <div class="col-auto">
+                    <img [src]="getPlayerData(match).assets.agent.small" 
+                         class="rounded"
+                         style="width: 60px; height: 60px;"
+                         alt="Agent">
+                  </div>
+                  
+                  <div class="col">
+                    <div class="d-flex justify-content-between align-items-center">
+                      <div>
+                        <h5 class="mb-1 fw-bold text-white">
+                          <i class="bi bi-map me-2"></i>{{ match.metadata.map }}
+                        </h5>
+                        <div>
+                          <span class="badge bg-info text-dark me-2">{{ match.metadata.mode }}</span>
+                          <span class="badge bg-secondary me-2">
+                            <i class="bi bi-clock me-1"></i>{{ formatGameLength(match.metadata.game_length) }}
+                          </span>
+                          <span class="text-white-50 small">{{ match.metadata.game_start_patched }}</span>
+                        </div>
+                      </div>
+
+                      <div class="text-center mx-4">
+                        <div class="mb-1">
+                          <span class="text-success fw-bold fs-4">{{ getPlayerData(match).stats.kills }}</span>
+                          <span class="text-white-50 mx-2">/</span>
+                          <span class="text-danger fw-bold fs-4">{{ getPlayerData(match).stats.deaths }}</span>
+                          <span class="text-white-50 mx-2">/</span>
+                          <span class="text-warning fw-bold fs-4">{{ getPlayerData(match).stats.assists }}</span>
+                        </div>
+                        <small class="text-white-50">K/D/A Ratio: {{ getKDRatio(match) }}</small>
+                      </div>
+
+                      <div class="text-end">
+                        <span class="badge fs-5 px-4 py-2 mb-2" 
+                              [ngClass]="getPlayerTeam(match).has_won ? 'bg-success' : 'bg-danger'">
+                          {{ getPlayerTeam(match).has_won ? 'VICTORY' : 'DEFEAT' }}
+                        </span>
+                        <div>
+                          <span class="text-white fw-bold">{{ getTeamScore(match) }}</span>
+                        </div>
+                        <div class="mt-2">
+                          <i class="bi" 
+                             [ngClass]="expandedMatch === i ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Match Details (Expandable) -->
+              <div class="card-body p-0" *ngIf="expandedMatch === i" [@slideDown]>
+                
+                <!-- Loading Match Details -->
+                <div *ngIf="loadingMatchDetails" class="text-center py-5">
+                  <div class="spinner-border text-danger mb-3" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                  </div>
+                  <p class="text-white-50">Loading match details...</p>
+                </div>
+
+                <!-- Match Details Content -->
+                <div *ngIf="!loadingMatchDetails && matchDetails">
+                
+                <!-- Player Performance Stats -->
+                <div class="bg-dark p-4 border-bottom border-secondary">
+                  <h6 class="text-danger mb-3 fw-bold">
+                    <i class="bi bi-graph-up me-2"></i>Your Performance
+                  </h6>
+                  <div class="row g-3">
+                    <div class="col-md-3">
+                      <div class="stat-box text-center p-3 bg-secondary rounded">
+                        <i class="bi bi-bullseye text-success fs-4 mb-2"></i>
+                        <div class="fs-5 fw-bold text-white">{{ getPlayerDataFromDetails().stats.score }}</div>
+                        <small class="text-white-50">Combat Score</small>
+                      </div>
+                    </div>
+                    <div class="col-md-3">
+                      <div class="stat-box text-center p-3 bg-secondary rounded">
+                        <i class="bi bi-shield-check text-info fs-4 mb-2"></i>
+                        <div class="fs-5 fw-bold text-white">
+                          {{ getPlayerDataFromDetails().stats.headshots }}/{{ getTotalShotsFromDetails() }}
+                        </div>
+                        <small class="text-white-50">Headshots ({{ getHeadshotPercentFromDetails() }}%)</small>
+                      </div>
+                    </div>
+                    <div class="col-md-3">
+                      <div class="stat-box text-center p-3 bg-secondary rounded">
+                        <i class="bi bi-activity text-warning fs-4 mb-2"></i>
+                        <div class="fs-5 fw-bold text-white">{{ getPlayerDataFromDetails().damage_made }}</div>
+                        <small class="text-white-50">Damage Dealt</small>
+                      </div>
+                    </div>
+                    <div class="col-md-3">
+                      <div class="stat-box text-center p-3 bg-secondary rounded">
+                        <i class="bi bi-coin text-warning fs-4 mb-2"></i>
+                        <div class="fs-5 fw-bold text-white">{{ getPlayerDataFromDetails().economy.spent.average }}</div>
+                        <small class="text-white-50">Avg. Credits Spent</small>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Teams Scoreboard -->
+                <div class="p-4">
+                  <h6 class="text-danger mb-3 fw-bold">
+                    <i class="bi bi-people-fill me-2"></i>Match Scoreboard
+                  </h6>
+
+                  <!-- Red Team -->
+                  <div class="mb-4">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                      <h6 class="mb-0 text-danger fw-bold">
+                        <i class="bi bi-square-fill me-2"></i>Red Team
+                      </h6>
+                      <span class="badge bg-danger">{{ matchDetails.teams.red.rounds_won }} Rounds</span>
+                    </div>
+                    <div class="table-responsive">
+                      <table class="table table-dark table-sm mb-0">
+                        <thead class="border-bottom border-danger">
+                          <tr>
+                            <th>Player</th>
+                            <th>Agent</th>
+                            <th class="text-center">K</th>
+                            <th class="text-center">D</th>
+                            <th class="text-center">A</th>
+                            <th class="text-center">Score</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="let player of matchDetails.players.red" 
+                              [ngClass]="player.puuid === account.puuid ? 'bg-danger bg-opacity-25' : ''">
+                            <td>
+                              <span class="fw-bold">{{ player.name }}</span>
+                              <span class="text-white-50">#{{ player.tag }}</span>
+                              <i class="bi bi-star-fill text-warning ms-2" *ngIf="player.puuid === account.puuid"></i>
+                            </td>
+                            <td>
+                              <img [src]="player.assets.agent.small" 
+                                   style="width: 24px; height: 24px;"
+                                   class="rounded me-2">
+                              {{ player.character }}
+                            </td>
+                            <td class="text-center text-success">{{ player.stats.kills }}</td>
+                            <td class="text-center text-danger">{{ player.stats.deaths }}</td>
+                            <td class="text-center text-warning">{{ player.stats.assists }}</td>
+                            <td class="text-center fw-bold">{{ player.stats.score }}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  <!-- Blue Team -->
+                  <div>
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                      <h6 class="mb-0 text-info fw-bold">
+                        <i class="bi bi-square-fill me-2"></i>Blue Team
+                      </h6>
+                      <span class="badge bg-info text-dark">{{ matchDetails.teams.blue.rounds_won }} Rounds</span>
+                    </div>
+                    <div class="table-responsive">
+                      <table class="table table-dark table-sm mb-0">
+                        <thead class="border-bottom border-info">
+                          <tr>
+                            <th>Player</th>
+                            <th>Agent</th>
+                            <th class="text-center">K</th>
+                            <th class="text-center">D</th>
+                            <th class="text-center">A</th>
+                            <th class="text-center">Score</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="let player of matchDetails.players.blue"
+                              [ngClass]="player.puuid === account.puuid ? 'bg-info bg-opacity-25' : ''">
+                            <td>
+                              <span class="fw-bold">{{ player.name }}</span>
+                              <span class="text-white-50">#{{ player.tag }}</span>
+                              <i class="bi bi-star-fill text-warning ms-2" *ngIf="player.puuid === account.puuid"></i>
+                            </td>
+                            <td>
+                              <img [src]="player.assets.agent.small" 
+                                   style="width: 24px; height: 24px;"
+                                   class="rounded me-2">
+                              {{ player.character }}
+                            </td>
+                            <td class="text-center text-success">{{ player.stats.kills }}</td>
+                            <td class="text-center text-danger">{{ player.stats.deaths }}</td>
+                            <td class="text-center text-warning">{{ player.stats.assists }}</td>
+                            <td class="text-center fw-bold">{{ player.stats.score }}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Performance Tab -->
-      <div class="tab-pane fade" id="performance">
-        <h3 class="text-center text-white-50">Performance stats coming soon...</h3>
+      <div *ngIf="activeTab === 'performance'">
+        <h2 class="mb-4 fw-bold text-danger">
+          <i class="bi bi-bar-chart-line-fill me-2"></i>Performance Statistics
+        </h2>
+        
+        <div class="row g-4">
+          <div class="col-md-6 col-lg-3">
+            <div class="card bg-secondary border-0 shadow">
+              <div class="card-body text-center p-4">
+                <i class="bi bi-collection-play text-info display-4 mb-3"></i>
+                <h6 class="text-white-50 text-uppercase mb-2">Total Matches</h6>
+                <p class="display-5 fw-bold text-white mb-0">{{ performance.totalMatches }}</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-lg-3">
+            <div class="card bg-secondary border-0 shadow">
+              <div class="card-body text-center p-4">
+                <i class="bi bi-crosshair text-success display-4 mb-3"></i>
+                <h6 class="text-white-50 text-uppercase mb-2">Avg Kills</h6>
+                <p class="display-5 fw-bold text-white mb-0">{{ performance.avgKills | number:'1.1-1' }}</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-lg-3">
+            <div class="card bg-secondary border-0 shadow">
+              <div class="card-body text-center p-4">
+                <i class="bi bi-graph-up text-warning display-4 mb-3"></i>
+                <h6 class="text-white-50 text-uppercase mb-2">K/D Ratio</h6>
+                <p class="display-5 fw-bold text-white mb-0">{{ performance.kd }}</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-lg-3">
+            <div class="card bg-secondary border-0 shadow">
+              <div class="card-body text-center p-4">
+                <i class="bi bi-trophy text-danger display-4 mb-3"></i>
+                <h6 class="text-white-50 text-uppercase mb-2">Win Rate</h6>
+                <p class="display-5 fw-bold text-white mb-0">{{ performance.winRate }}%</p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Agents Tab -->
-      <div class="tab-pane fade" id="agents">
-        <h3 class="text-center text-white-50">Agent statistics coming soon...</h3>
+      <div *ngIf="activeTab === 'agents'">
+        <h2 class="mb-4 fw-bold text-danger">
+          <i class="bi bi-person-badge-fill me-2"></i>Agent Statistics
+        </h2>
+        
+        <div class="row g-3">
+          <div class="col-md-6 col-lg-4" *ngFor="let agent of agentStats">
+            <div class="card bg-secondary border-0 shadow-sm hover-lift">
+              <div class="card-body d-flex align-items-center justify-content-between p-4">
+                <div>
+                  <h5 class="text-white mb-1 fw-bold">{{ agent.agent }}</h5>
+                  <p class="text-white-50 mb-0">
+                    <i class="bi bi-controller me-1"></i>{{ agent.count }} matches
+                  </p>
+                </div>
+                <div class="text-end">
+                  <span class="badge bg-danger fs-6 px-3 py-2">{{ agent.count }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="agentStats.length === 0" class="text-center py-5">
+          <i class="bi bi-exclamation-circle display-1 text-white-50 mb-3"></i>
+          <h4 class="text-white-50">No agent data available</h4>
+        </div>
       </div>
 
       <!-- Maps Tab -->
-      <div class="tab-pane fade" id="maps">
-        <h3 class="text-center text-white-50">Map statistics coming soon...</h3>
+      <div *ngIf="activeTab === 'maps'">
+        <h2 class="mb-4 fw-bold text-danger">
+          <i class="bi bi-map-fill me-2"></i>Map Statistics
+        </h2>
+        
+        <div class="row g-3">
+          <div class="col-md-6 col-lg-4" *ngFor="let map of mapStats">
+            <div class="card bg-secondary border-0 shadow-sm hover-lift">
+              <div class="card-body d-flex align-items-center justify-content-between p-4">
+                <div>
+                  <h5 class="text-white mb-1 fw-bold">{{ map.map }}</h5>
+                  <p class="text-white-50 mb-0">
+                    <i class="bi bi-geo-alt me-1"></i>{{ map.count }} matches played
+                  </p>
+                </div>
+                <div class="text-end">
+                  <span class="badge bg-info text-dark fs-6 px-3 py-2">{{ map.count }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="mapStats.length === 0" class="text-center py-5">
+          <i class="bi bi-exclamation-circle display-1 text-white-50 mb-3"></i>
+          <h4 class="text-white-50">No map data available</h4>
+        </div>
       </div>
 
     </div>

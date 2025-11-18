@@ -191,3 +191,60 @@ img[alt="Agent"]:hover {
     padding: 0.5rem !important;
   }
 }
+
+  .hover-lift {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .hover-lift:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(255, 70, 85, 0.3) !important;
+  }
+
+  .nav-link.active {
+    border-bottom: 3px solid #dc3545;
+  }
+
+  .stat-card {
+    transition: transform 0.2s ease;
+  }
+
+  .stat-card:hover {
+    transform: translateY(-5px);
+  }
+
+  .match-card {
+    transition: all 0.2s ease;
+  }
+
+  .match-card:hover {
+    transform: translateX(5px);
+  }
+
+  .match-expandable {
+    transition: all 0.3s ease;
+  }
+
+  .cursor-pointer {
+    cursor: pointer;
+  }
+
+  .cursor-pointer:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+
+  .stat-box {
+    transition: all 0.2s ease;
+  }
+
+  .stat-box:hover {
+    transform: scale(1.05);
+  }
+
+  .table-dark tr.bg-danger {
+    border-left: 3px solid #dc3545;
+  }
+
+  .table-dark tr.bg-info {
+    border-left: 3px solid #0dcaf0;
+  }

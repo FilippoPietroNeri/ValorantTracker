@@ -35,4 +35,13 @@ export class Valorant {
       },
     });
   }
+
+  getMatchDetails(matchId: string): Observable<any> {
+    return this.http.get(`/api/valorant/v2/match/${matchId}`, {
+      headers: {
+        "Accept": "*/*",
+        'Authorization': environment.riotKey,
+      },
+    });
+  }
 }
