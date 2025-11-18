@@ -1,23 +1,87 @@
-<div class="home-container">
-  <div class="overlay"></div>
+<div class="home-container min-vh-100 d-flex align-items-center justify-content-center position-relative" style="background: linear-gradient(135deg, #0f1923 0%, #1a2634 100%);">
+  <!-- Background overlay per effetto scuro -->
+  <div class="position-absolute top-0 start-0 w-100 h-100" style="background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.5) 100%);"></div>
+  
+  <!-- Content -->
+  <div class="container position-relative z-1">
+    <div class="row justify-content-center">
+      <div class="col-12 col-md-10 col-lg-8 text-center">
+        <!-- Logo Section -->
+        <div class="logo-section mb-5">
+          <img 
+            src="https://www.pngall.com/wp-content/uploads/13/Valorant-Logo-PNG-Cutout.png" 
+            alt="Valorant logo" 
+            class="valorant-logo img-fluid mb-4" 
+            style="max-width: 300px;"
+          />
+          <h1 class="display-3 fw-bold text-white mb-3">VALORANT STATS</h1>
+          <p class="lead text-white-50">Check Detailed Valorant Stats and Leaderboards</p>
+        </div>
+        
+        <!-- Search Box -->
+        <div class="search-box position-relative">
+          <div class="input-group input-group-lg shadow-lg">
+            <span class="input-group-text bg-white border-0 ps-4">
+              <img 
+                src="https://assets.streamlinehq.com/image/private/w_300,h_300,ar_1/f_auto/v1/icons/video-games/riot-games-2vd949zm1hbxz31ows9gi.png/riot-games-3jn0kkoft4vvp49m2g5g8r.png?_a=DATAg1AAZAA0" 
+                alt="Riot logo" 
+                style="width: 24px; height: 24px;"
+              />
+            </span>
+            <input
+              type="text"
+              class="form-control border-0 py-3"
+              [(ngModel)]="searchText"
+              placeholder="Find an Agent or Guide, ie. player#NA1, or Sage"
+              (keyup.enter)="onSearch()"
+              (focus)="onInputFocus()"
+              (blur)="onInputBlur()"
+            />
+            <button class="btn btn-danger px-5" type="button" (click)="onSearch()">
+              Search
+            </button>
+          </div>
 
-  <div class="content">
-    <div class="logo-section">
-      <img src="https://www.pngall.com/wp-content/uploads/13/Valorant-Logo-PNG-Cutout.png" alt="Valorant logo" class="valorant-logo" />
-      <h1>VALORANT STATS</h1>
-      <p>Check Detailed Valorant Stats and Leaderboards</p>
-    </div>
-
-    <div class="search-box">
-      <div class="search-icon">
-        <img src="https://assets.streamlinehq.com/image/private/w_300,h_300,ar_1/f_auto/v1/icons/video-games/riot-games-2vd949zm1hbxz31ows9gi.png/riot-games-3jn0kkoft4vvp49m2g5g8r.png?_a=DATAg1AAZAA0" alt="Riot logo" />
+          <!-- Recent Searches Dropdown -->
+          <div class="recent-searches bg-dark border border-secondary rounded-3 shadow-lg mt-2 position-absolute w-100" 
+               *ngIf="showRecentSearches && recentSearches.length > 0"
+               style="z-index: 1000;">
+            <div class="p-3 border-bottom border-secondary d-flex justify-content-between align-items-center">
+              <h6 class="mb-0 text-white-50 text-uppercase" style="font-size: 0.75rem; letter-spacing: 1px;">
+                <i class="bi bi-clock-history me-2"></i>Recent Searches
+              </h6>
+              <button class="btn btn-sm btn-outline-danger" 
+                      (click)="clearAllSearches()"
+                      style="font-size: 0.7rem; padding: 0.25rem 0.5rem;">
+                Clear All
+              </button>
+            </div>
+            <div class="recent-search-list">
+              <div class="recent-search-item d-flex justify-content-between align-items-center p-3 border-bottom border-secondary"
+                   *ngFor="let search of recentSearches"
+                   (click)="selectRecentSearch(search)"
+                   style="cursor: pointer; transition: background 0.2s;">
+                <div class="d-flex align-items-center gap-3">
+                  <div class="search-icon bg-danger bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center"
+                       style="width: 40px; height: 40px;">
+                    <i class="bi bi-person-fill text-danger"></i>
+                  </div>
+                  <div>
+                    <p class="mb-0 text-white fw-semibold">
+                      {{ search.name }}<span class="text-danger">#{{ search.tag }}</span>
+                    </p>
+                  </div>
+                </div>
+                <button class="btn btn-sm btn-outline-secondary border-0"
+                        (click)="removeRecentSearch($event, search)"
+                        style="opacity: 0.5;">
+                  <i class="bi bi-x-lg"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <input
-        type="text"
-        [(ngModel)]="searchText"
-        placeholder="Find an Agent or Guide, ie. player#NA1, or Sage"
-        (keyup.enter)="onSearch()"
-      />
     </div>
   </div>
 </div>

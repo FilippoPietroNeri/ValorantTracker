@@ -1,76 +1,210 @@
 <div class="player-page" *ngIf="!loading; else loadingTpl">
-  <!-- Header -->
-  <div class="banner" [style.backgroundImage]="'url(' + account.card.wide + ')'">
-    <div class="overlay"></div>
-    <div class="player-info">
-      <img [src]="account.card.small" class="avatar" alt="Player Avatar">
-      <div>
-        <h1>{{ account.name }}<span>#{{ account.tag }}</span></h1>
-        <p>{{ mmr?.currenttierpatched || 'Unranked' }}</p>
+  <!-- Header Banner -->
+  <div class="banner position-relative overflow-hidden" 
+       [style.backgroundImage]="'url(' + account.card.wide + ')'"
+       style="height: 300px; background-size: cover; background-position: center;">
+    <div class="position-absolute top-0 start-0 w-100 h-100 bg-dark opacity-50"></div>
+    
+    <div class="container position-relative h-100">
+      <div class="row h-100 align-items-end pb-4">
+        <div class="col-12">
+          <div class="d-flex align-items-center gap-4">
+            <img [src]="account.card.small" 
+                 class="avatar rounded-3 border border-3 border-danger shadow-lg" 
+                 alt="Player Avatar"
+                 style="width: 120px; height: 120px; object-fit: cover;">
+            <div class="text-white">
+              <h1 class="display-4 fw-bold mb-0">
+                {{ account.name }}<span class="text-danger">#{{ account.tag }}</span>
+              </h1>
+              <p class="lead mb-0 text-white-50">
+                <i class="bi bi-trophy-fill text-warning me-2"></i>
+                {{ mmr?.currenttierpatched || 'Unranked' }}
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Tabs -->
-  <div class="tabs">
-    <button class="active">Overview</button>
-    <button>Matches</button>
-    <button>Performance</button>
-    <button>Agents</button>
-    <button>Maps</button>
+  <!-- Navigation Tabs -->
+  <div class="bg-dark border-bottom border-secondary">
+    <div class="container">
+      <ul class="nav nav-tabs border-0" role="tablist">
+        <li class="nav-item">
+          <button class="nav-link active bg-transparent text-white px-4 py-3" 
+                  data-bs-toggle="tab" 
+                  data-bs-target="#overview">
+            Overview
+          </button>
+        </li>
+        <li class="nav-item">
+          <button class="nav-link bg-transparent text-white-50 px-4 py-3" 
+                  data-bs-toggle="tab" 
+                  data-bs-target="#matches">
+            Matches
+          </button>
+        </li>
+        <li class="nav-item">
+          <button class="nav-link bg-transparent text-white-50 px-4 py-3" 
+                  data-bs-toggle="tab" 
+                  data-bs-target="#performance">
+            Performance
+          </button>
+        </li>
+        <li class="nav-item">
+          <button class="nav-link bg-transparent text-white-50 px-4 py-3" 
+                  data-bs-toggle="tab" 
+                  data-bs-target="#agents">
+            Agents
+          </button>
+        </li>
+        <li class="nav-item">
+          <button class="nav-link bg-transparent text-white-50 px-4 py-3" 
+                  data-bs-toggle="tab" 
+                  data-bs-target="#maps">
+            Maps
+          </button>
+        </li>
+      </ul>
+    </div>
   </div>
 
-  <!-- Stats Overview -->
-  <section class="overview">
-    <div class="stat-card">
-      <h3>Current Rank</h3>
-      <img [src]="mmr?.images?.small" alt="Rank">
-      <p>{{ mmr?.currenttierpatched }}</p>
-    </div>
+  <!-- Tab Content -->
+  <div class="tab-content bg-dark text-white py-5">
+    <div class="container">
+      
+      <!-- Overview Tab -->
+      <div class="tab-pane fade show active" id="overview">
+        <div class="row g-4 mb-5">
+          <!-- Current Rank Card -->
+          <div class="col-md-4">
+            <div class="stat-card bg-dark text-white border border-danger shadow-lg h-100">
+              <div class="card-body text-center p-4">
+                <h5 class="card-title text-uppercase fw-bold mb-3 text-white-50">Current Rank</h5>
+                <img [src]="mmr?.images?.small" 
+                     alt="Rank" 
+                     class="mb-3"
+                     style="width: 100px; height: 100px;">
+                <p class="fs-4 fw-bold mb-0 text-white">{{ mmr?.currenttierpatched }}</p>
+              </div>
+            </div>
+          </div>
 
-    <div class="stat-card">
-      <h3>Ranking in Tier</h3>
-      <p>{{ mmr?.ranking_in_tier }} RR</p>
-    </div>
+          <!-- Ranking in Tier Card -->
+          <div class="col-md-4">
+            <div class="stat-card bg-dark text-white border border-danger shadow-lg h-100">
+              <div class="card-body text-center p-4">
+                <h5 class="card-title text-uppercase fw-bold mb-3 text-white-50">Ranking in Tier</h5>
+                <div class="d-flex align-items-center justify-content-center" style="height: 100px;">
+                  <p class="display-3 fw-bold text-danger mb-0">{{ mmr?.ranking_in_tier }}</p>
+                </div>
+                <p class="text-white-50 mb-0">RR (Ranked Rating)</p>
+              </div>
+            </div>
+          </div>
 
-    <div class="stat-card">
-      <h3>Account Level</h3>
-      <p>{{ account.account_level }}</p>
-    </div>
-  </section>
+          <!-- Account Level Card -->
+          <div class="col-md-4">
+            <div class="stat-card bg-dark text-white border border-danger shadow-lg h-100">
+              <div class="card-body text-center p-4">
+                <h5 class="card-title text-uppercase fw-bold mb-3 text-white-50">Account Level</h5>
+                <div class="d-flex align-items-center justify-content-center" style="height: 100px;">
+                  <p class="display-3 fw-bold text-warning mb-0">{{ account.account_level }}</p>
+                </div>
+                <p class="text-white-50 mb-0">Total Level</p>
+              </div>
+            </div>
+          </div>
+        </div>
 
-  <!-- Match History -->
-  <section class="matches" *ngIf="matches.length > 0">
-    <h2>Last Matches</h2>
-    <div class="match-table">
-      <div class="match-row header">
-        <span>Map</span>
-        <span>Agent</span>
-        <span>Mode</span>
-        <span>K/D/A</span>
-        <span>Result</span>
+        <!-- Match History Section -->
+        <section *ngIf="matches.length > 0">
+          <h2 class="mb-4 fw-bold">
+            <i class="bi bi-clock-history me-2"></i>Last Matches
+          </h2>
+          
+          <div class="card bg-secondary border-0 shadow-lg">
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table table-dark table-hover mb-0">
+                  <thead class="border-bottom border-danger">
+                    <tr>
+                      <th class="py-3 px-4">Map</th>
+                      <th class="py-3">Agent</th>
+                      <th class="py-3">Mode</th>
+                      <th class="py-3">K/D/A</th>
+                      <th class="py-3 text-end px-4">Result</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let match of matches" class="border-bottom border-secondary">
+                      <td class="py-3 px-4 fw-semibold">{{ match.metadata.map }}</td>
+                      <td class="py-3">
+                        <div class="d-flex align-items-center gap-2">
+                          <img [src]="match.players.all_players[0].assets.agent.small" 
+                               class="rounded"
+                               style="width: 32px; height: 32px;"
+                               alt="Agent">
+                          <span>{{ match.players.all_players[0].character }}</span>
+                        </div>
+                      </td>
+                      <td class="py-3">
+                        <span class="badge bg-info text-dark">{{ match.metadata.mode }}</span>
+                      </td>
+                      <td class="py-3">
+                        <span class="text-success">{{ match.players.all_players[0].stats.kills }}</span> /
+                        <span class="text-danger">{{ match.players.all_players[0].stats.deaths }}</span> /
+                        <span class="text-warning">{{ match.players.all_players[0].stats.assists }}</span>
+                      </td>
+                      <td class="py-3 text-end px-4">
+                        <span class="badge fs-6 px-3 py-2" 
+                              [ngClass]="match.teams.blue.has_won ? 'bg-success' : 'bg-danger'">
+                          {{ match.teams.blue.has_won ? 'Victory' : 'Defeat' }}
+                        </span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
 
-      <div class="match-row" *ngFor="let match of matches">
-        <span>{{ match.metadata.map }}</span>
-        <span>
-          <img [src]="match.players.all_players[0].assets.agent.small" class="agent">
-          {{ match.players.all_players[0].character }}
-        </span>
-        <span>{{ match.metadata.mode }}</span>
-        <span>
-          {{ match.players.all_players[0].stats.kills }}/
-          {{ match.players.all_players[0].stats.deaths }}/
-          {{ match.players.all_players[0].stats.assists }}
-        </span>
-        <span [class.win]="match.teams.blue.has_won"> 
-          {{ match.teams.blue.has_won ? 'Victory' : 'Defeat' }}
-        </span>
+      <!-- Matches Tab -->
+      <div class="tab-pane fade" id="matches">
+        <h3 class="text-center text-white-50">Match history coming soon...</h3>
       </div>
+
+      <!-- Performance Tab -->
+      <div class="tab-pane fade" id="performance">
+        <h3 class="text-center text-white-50">Performance stats coming soon...</h3>
+      </div>
+
+      <!-- Agents Tab -->
+      <div class="tab-pane fade" id="agents">
+        <h3 class="text-center text-white-50">Agent statistics coming soon...</h3>
+      </div>
+
+      <!-- Maps Tab -->
+      <div class="tab-pane fade" id="maps">
+        <h3 class="text-center text-white-50">Map statistics coming soon...</h3>
+      </div>
+
     </div>
-  </section>
+  </div>
 </div>
 
+<!-- Loading Template -->
 <ng-template #loadingTpl>
-  <div class="loading">Loading player data...</div>
+  <div class="d-flex justify-content-center align-items-center min-vh-100 bg-dark">
+    <div class="text-center">
+      <div class="spinner-border text-danger mb-3" role="status" style="width: 4rem; height: 4rem;">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="text-white fs-4">Loading player data...</p>
+    </div>
+  </div>
 </ng-template>
